@@ -2,6 +2,8 @@ package com.example.sakydpozrux.githubusers.dagger;
 
 import android.content.Context;
 
+import com.example.sakydpozrux.githubusers.ui.user.UserDetailPresenter;
+import com.example.sakydpozrux.githubusers.ui.user.UserDetailPresenterImpl;
 import com.example.sakydpozrux.githubusers.ui.users.UserListPresenter;
 import com.example.sakydpozrux.githubusers.ui.users.UserListPresenterImpl;
 
@@ -20,5 +22,11 @@ public class UiModule {
     @Singleton
     public UserListPresenter provideUsersPresenter(Context context) {
         return new UserListPresenterImpl(context);
+    }
+
+    @Provides
+    @Singleton
+    public UserDetailPresenter provideUserDetailPresenter(Context context) {
+        return new UserDetailPresenterImpl(context);
     }
 }
