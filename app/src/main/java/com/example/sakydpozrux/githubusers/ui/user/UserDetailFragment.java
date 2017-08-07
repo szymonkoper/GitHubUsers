@@ -1,7 +1,5 @@
 package com.example.sakydpozrux.githubusers.ui.user;
 
-import android.app.Activity;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.sakydpozrux.githubusers.R;
-import com.example.sakydpozrux.githubusers.dummy.DummyContent;
 import com.example.sakydpozrux.githubusers.model.User;
 
 public class UserDetailFragment extends Fragment {
