@@ -1,4 +1,4 @@
-package com.example.sakydpozrux.githubusers.ui.users;
+package com.example.sakydpozrux.githubusers.ui.user;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

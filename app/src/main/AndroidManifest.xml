@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.users.UserDetailActivity"
+            android:name=".ui.user.UserDetailActivity"
             android:label="@string/title_user_detail"
             android:parentActivityName=".ui.users.UserListActivity"
             android:theme="@style/AppTheme.NoActionBar">
