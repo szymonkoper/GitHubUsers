@@ -1,6 +1,8 @@
 package com.example.sakydpozrux.githubusers.dagger;
 
 import com.example.sakydpozrux.githubusers.network.GitHubApi;
+import com.example.sakydpozrux.githubusers.ui.user.UserDetailFragment;
+import com.example.sakydpozrux.githubusers.ui.user.UserDetailPresenterImpl;
 import com.example.sakydpozrux.githubusers.ui.users.UserListActivity;
 import com.example.sakydpozrux.githubusers.ui.users.UserListPresenterImpl;
 
@@ -17,5 +19,7 @@ import dagger.Component;
 public interface AppComponent {
     void inject(UserListActivity target);
     void inject(UserListPresenterImpl target);
+    void inject(UserDetailPresenterImpl target);
     void inject(GitHubApi target);
+    void inject(UserDetailFragment target);
 }
