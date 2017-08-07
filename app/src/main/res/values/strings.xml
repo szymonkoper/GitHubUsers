@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GitHubUsers</string>
+    <string name="title_user_detail">User Detail</string>
+</resources>
