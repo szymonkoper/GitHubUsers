@@ -3,6 +3,7 @@ package com.example.sakydpozrux.githubusers.ui.users;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -65,6 +66,21 @@ public class UserListActivity extends AppCompatActivity
         } else {
             mTwoPane = false;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        List<User> users = mAdapter.getUsers();
+        ArrayList<Parcelable> parcelableArrayList = new ArrayList<Parcelable>(users);
+        outState.putParcelableArrayList(KEY_USERS_LIST, parcelableArrayList);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        List<User> users = savedInstanceState.getParcelableArrayList(KEY_USERS_LIST);
+        showUsers(users);
     }
 
     private void setupRecyclerView(List<User> users) {
