@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.example.sakydpozrux.githubusers.R;
 import com.example.sakydpozrux.githubusers.app.GitHubUsersApp;
 import com.example.sakydpozrux.githubusers.model.User;
+import com.example.sakydpozrux.githubusers.ui.user.UserDetailActivity;
+import com.example.sakydpozrux.githubusers.ui.user.UserDetailFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,6 +126,21 @@ public class UserListActivity extends AppCompatActivity
 
     @Override
     public void launchUserDetail(User item) {
-        Toast.makeText(this, "TODO: launch detail view: " + item.login, Toast.LENGTH_SHORT).show();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(UserDetailFragment.BUNDLE_KEY_USER, item);
+
+        if (mTwoPane) {
+            UserDetailFragment userDetailFragment = new UserDetailFragment();
+            userDetailFragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_user_detail, userDetailFragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, UserDetailActivity.class);
+            intent.putExtra(UserDetailFragment.BUNDLE_KEY_USER, item);
+
+            startActivity(intent);
+        }
     }
 }
