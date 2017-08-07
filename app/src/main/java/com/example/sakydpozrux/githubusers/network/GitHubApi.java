@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.sakydpozrux.githubusers.app.GitHubUsersApp;
+import com.example.sakydpozrux.githubusers.model.Repository;
 import com.example.sakydpozrux.githubusers.model.User;
 
 import org.json.JSONArray;
@@ -42,10 +43,11 @@ public class GitHubApi implements Api {
 
     private static final String JSON_KEY_ITEMS = "items";
 
-    private static final String JSON_KEY_ID = "id";
     private static final String JSON_KEY_LOGIN = "login";
     private static final String JSON_KEY_PROFILE_URL = "html_url";
     private static final String JSON_KEY_REPOS_URL = "repos_url";
+
+    private static final String JSON_KEY_REPO_NAME = "name";
 
     public GitHubApi(Context context) {
         ((GitHubUsersApp)context).getAppComponent().inject(this);
@@ -67,6 +69,22 @@ public class GitHubApi implements Api {
     }
 
     @Override
+    public void doReposQuery(String reposUrl,
+                             Response.Listener<JSONArray> responseListener,
+                             Response.ErrorListener errorListener) {
+        Uri uri = Uri.parse(reposUrl).buildUpon()
+                .appendQueryParameter(API_PER_PAGE_PARAM, API_PER_PAGE_MAX).build();
+
+        requestQueue.add(
+                new JsonArrayRequest(
+                        Request.Method.GET,
+                        uri.toString(),
+                        null,
+                        responseListener,
+                        errorListener));
+    }
+
+    @Override
     public List<User> parseUsersResponse(JSONObject json) throws JSONException {
         JSONArray array = json.getJSONArray(JSON_KEY_ITEMS);
 
@@ -79,6 +97,19 @@ public class GitHubApi implements Api {
             String reposUrl = user.getString(JSON_KEY_REPOS_URL);
 
             items.add(new User(login, profileUrl, reposUrl));
+        }
+
+        return items;
+    }
+
+    @Override
+    public List<Repository> parseReposResponse(JSONArray json) throws JSONException {
+
+        List<Repository> items = new LinkedList<>();
+        for (int i = 0; i < json.length(); ++i) {
+            JSONObject repo = json.getJSONObject(i);
+            String name = repo.getString(JSON_KEY_REPO_NAME);
+            items.add(new Repository(name));
         }
 
         return items;
