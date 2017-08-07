@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Github Users</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Enter a username</string>
+</resources>
