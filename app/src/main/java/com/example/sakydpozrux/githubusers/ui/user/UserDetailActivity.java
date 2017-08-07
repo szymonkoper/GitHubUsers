@@ -29,8 +29,8 @@ public class UserDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
-            arguments.putString(UserDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(UserDetailFragment.ARG_ITEM_ID));
+            arguments.putString(UserDetailFragment.BUNDLE_KEY_USER,
+                    getIntent().getStringExtra(UserDetailFragment.BUNDLE_KEY_USER));
             UserDetailFragment fragment = new UserDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

@@ -11,12 +11,13 @@ import android.widget.TextView;
 
 import com.example.sakydpozrux.githubusers.R;
 import com.example.sakydpozrux.githubusers.dummy.DummyContent;
+import com.example.sakydpozrux.githubusers.model.User;
 
 public class UserDetailFragment extends Fragment {
 
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String BUNDLE_KEY_USER = "BUNDLE_KEY_USER";
 
-    private DummyContent.DummyItem mItem;
+    private User user;
 
     public UserDetailFragment() {
     }
@@ -25,25 +26,13 @@ public class UserDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-
-            Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
-            }
-        }
+        user = getArguments().getParcelable(BUNDLE_KEY_USER);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.user_detail, container, false);
-
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.user_detail)).setText(mItem.details);
-        }
 
         return rootView;
     }
