@@ -6,6 +6,14 @@
 **GitHub Users** is an evaluation project. My task was to quickly build a small Android app to find GitHub users and show their details.
 
 
+# Screenshots
+
+![SmartphoneMain](readme_screenshots/smartphone_main.png "Screenshot from smartphone")
+![SmartphoneDetail](readme_screenshots/smartphone_detail.png "Screenshot from smartphone")
+
+![Tablet](readme_screenshots/tablet.png "Screenshot from tablet")
+
+
 # Libraries used
 
 * [ButterKnife](https://github.com/JakeWharton/butterknife) - Fields and methods binding for Android views
