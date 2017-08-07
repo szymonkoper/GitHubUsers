@@ -1,4 +1,4 @@
-package com.example.sakydpozrux.githubusers;
+package com.example.sakydpozrux.githubusers.ui.users;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import com.example.sakydpozrux.githubusers.R;
 import com.example.sakydpozrux.githubusers.dummy.DummyContent;
 
 import java.util.List;
