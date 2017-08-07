@@ -1,6 +1,7 @@
 package com.example.sakydpozrux.githubusers.dagger;
 
 import android.app.Application;
+import android.app.SearchManager;
 import android.content.Context;
 
 import javax.inject.Singleton;
@@ -24,5 +25,11 @@ public class AppModule {
     @Singleton
     public Context provideContext() {
         return application;
+    }
+
+    @Provides
+    @Singleton
+    public SearchManager provideSearchManager(Context context) {
+        return (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
     }
 }
