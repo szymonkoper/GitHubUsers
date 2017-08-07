@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.sakydpozrux.githubusers.R;
@@ -21,11 +23,21 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class UserListActivity extends AppCompatActivity
-    implements UsersRecyclerViewAdapter.OnItemClickListener {
+    implements UsersRecyclerViewAdapter.OnItemClickListener, UserListPresenter.View {
+    @Inject UserListPresenter mPresenter;
     @Inject SearchManager mSearchManager;
 
+    @BindView(R.id.rv_list) RecyclerView mRecyclerView;
+    @BindView(R.id.progress_bar) ProgressBar mProgressBar;
+
+    private UsersRecyclerViewAdapter mAdapter;
     private boolean mTwoPane;
+
+    private static final String KEY_USERS_LIST = "KEY_USERS_LIST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,26 +45,35 @@ public class UserListActivity extends AppCompatActivity
         setContentView(R.layout.activity_user_list);
 
         ((GitHubUsersApp)getApplication()).getAppComponent().inject(this);
+        ButterKnife.bind(this);
 
-        View recyclerView = findViewById(R.id.rv_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        List<User> users;
+        if (savedInstanceState == null) {
+            users = new ArrayList<>();
+        } else {
+            users = savedInstanceState.getParcelableArrayList(KEY_USERS_LIST);
+        }
 
-        if (findViewById(R.id.user_detail_container) != null) {
+        setupRecyclerView(users);
+
+        mPresenter.setView(this);
+
+        if (findViewById(R.id.container_user_detail) != null) {
             mTwoPane = true;
+        } else {
+            mTwoPane = false;
         }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        List<User> temporaryList = new ArrayList<User>();
-        temporaryList.add(new User("sakydpozrux"));
-        temporaryList.add(new User("andrzej"));
-        recyclerView.setAdapter(new UsersRecyclerViewAdapter(temporaryList, this));
+    private void setupRecyclerView(List<User> users) {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new UsersRecyclerViewAdapter(users, this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onItemClick(User item) {
-        Toast.makeText(this, "TODO: launch detail view: " + item.login, Toast.LENGTH_SHORT).show();
+        launchUserDetail(item);
     }
 
     @Override
@@ -70,7 +91,39 @@ public class UserListActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Toast.makeText(this, "TODO: do query: " + query, Toast.LENGTH_LONG).show();
+            mPresenter.getUsers(query);
         }
+    }
+
+    @Override
+    public void showLoading() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showUsers(List<User> items) {
+        mAdapter = new UsersRecyclerViewAdapter(items, this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.getAdapter().notifyDataSetChanged();
+
+        if (mTwoPane && !items.isEmpty()) {
+            User first = items.get(0);
+            launchUserDetail(first);
+        }
+    }
+
+    @Override
+    public void launchUserDetail(User item) {
+        Toast.makeText(this, "TODO: launch detail view: " + item.login, Toast.LENGTH_SHORT).show();
     }
 }
