@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
-**GitHub Users** is an evaluation project. My task was to quickly build a small Android app to find GitHub users and show their details.
+**GitHub Users** is an evaluation project. My task was to quickly build a small Android app to find GitHub users and show their details. The app has offline cache for network responses.
 
 
 # Screenshots
@@ -24,8 +24,6 @@
 # What is missing
 
  - Testing (for example using Mockito and Espresso),
- - Offline cache for responses (from Volley),
- - Better informing about errors,
  - Taking care of GitHub API pagination (now it's max 100 items per response)
 
 
