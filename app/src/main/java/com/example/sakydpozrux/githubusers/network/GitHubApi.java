@@ -101,6 +101,7 @@ public class GitHubApi implements Api {
 
         String cachedResponse = getResponseFromCache(uri);
         responseListener.onResponse(cachedResponse);
+        errorListener.onErrorResponse(new NoConnectionError());
     }
 
     @Override
