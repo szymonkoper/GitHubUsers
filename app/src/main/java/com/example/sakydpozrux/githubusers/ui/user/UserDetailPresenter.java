@@ -15,7 +15,7 @@ public interface UserDetailPresenter {
     interface View {
         void showLoading();
         void hideLoading();
-        void showError(String message);
+        void showError(Exception exception);
 
         void showRepositories(List<Repository> items);
     }

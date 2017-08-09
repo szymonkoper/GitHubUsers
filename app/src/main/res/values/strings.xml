@@ -3,4 +3,7 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Enter a username</string>
     <string name="title_user_detail">User details</string>
+
+    <string name="error_could_not_connect">Could not connect</string>
+    <string name="error_during_load">Could not load data</string>
 </resources>

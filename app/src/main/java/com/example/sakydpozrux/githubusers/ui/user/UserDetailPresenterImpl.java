@@ -8,7 +8,6 @@ import com.android.volley.VolleyError;
 import com.example.sakydpozrux.githubusers.app.GitHubUsersApp;
 import com.example.sakydpozrux.githubusers.network.Api;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import javax.inject.Inject;
@@ -18,8 +17,8 @@ import javax.inject.Inject;
  */
 
 public class UserDetailPresenterImpl implements UserDetailPresenter {
-    @Inject Api api;
-    private View view;
+    @Inject Api mApi;
+    private View mView;
 
     public UserDetailPresenterImpl(Context context) {
         ((GitHubUsersApp)context).getAppComponent().inject(this);
@@ -27,27 +26,27 @@ public class UserDetailPresenterImpl implements UserDetailPresenter {
 
     @Override
     public void setView(View view) {
-        this.view = view;
+        this.mView = view;
     }
 
     @Override
     public void getRepos(String url) {
-        view.showLoading();
-        api.doReposQuery(url, getResponseListener(), getErrorListener());
+        mView.showLoading();
+        mApi.doReposQuery(url, getResponseListener(), getErrorListener());
 
     }
 
     @NonNull
-    private Response.Listener<JSONArray> getResponseListener() {
-        return new Response.Listener<JSONArray>() {
+    private Response.Listener<String> getResponseListener() {
+        return new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONArray response) {
-                view.hideLoading();
+            public void onResponse(String response) {
+                mView.hideLoading();
 
                 try {
-                    view.showRepositories(api.parseReposResponse(response));
+                    mView.showRepositories(mApi.parseReposResponse(response));
                 } catch (JSONException error) {
-                    view.showError(error.getLocalizedMessage());
+                    mView.showError(error);
                 }
             }
         };
@@ -58,8 +57,8 @@ public class UserDetailPresenterImpl implements UserDetailPresenter {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                view.hideLoading();
-                view.showError(error.getLocalizedMessage());
+                mView.hideLoading();
+                mView.showError(error);
             }
         };
     }

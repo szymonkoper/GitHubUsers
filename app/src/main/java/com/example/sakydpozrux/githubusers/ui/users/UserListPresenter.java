@@ -11,11 +11,12 @@ import java.util.List;
 public interface UserListPresenter {
     void setView(View view);
     void getUsers(String query);
+    void getUsersLastQuery();
 
     interface View {
         void showLoading();
         void hideLoading();
-        void showError(String message);
+        void showError(Exception exception);
 
         void showUsers(List<User> items);
         void launchUserDetail(User item);

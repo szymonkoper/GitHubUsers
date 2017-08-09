@@ -4,4 +4,7 @@
     <string name="search_title">Szukaj</string>
     <string name="search_hint">Wpisz nazwę użytkownika</string>
     <string name="title_user_detail">Szczegóły użytkownika</string>
+
+    <string name="error_could_not_connect">Brak połączenia</string>
+    <string name="error_during_load">Błąd podczas wczytywania</string>
 </resources>

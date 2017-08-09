@@ -4,9 +4,7 @@ import com.android.volley.Response;
 import com.example.sakydpozrux.githubusers.model.Repository;
 import com.example.sakydpozrux.githubusers.model.User;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -16,12 +14,12 @@ import java.util.List;
 
 public interface Api {
     void doUsersQuery(String query,
-                      Response.Listener<JSONObject> responseListener,
+                      Response.Listener<String> responseListener,
                       Response.ErrorListener errorListener);
     void doReposQuery(String reposUrl,
-                      Response.Listener<JSONArray> responseListener,
+                      Response.Listener<String> responseListener,
                       Response.ErrorListener errorListener);
 
-    List<User> parseUsersResponse(JSONObject json) throws JSONException;
-    List<Repository> parseReposResponse(JSONArray json) throws JSONException;
+    List<User> parseUsersResponse(String jsonString) throws JSONException;
+    List<Repository> parseReposResponse(String jsonArrayString) throws JSONException;
 }

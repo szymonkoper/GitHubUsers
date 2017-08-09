@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 import com.example.sakydpozrux.githubusers.R;
 import com.example.sakydpozrux.githubusers.app.GitHubUsersApp;
 import com.example.sakydpozrux.githubusers.model.User;
+import com.example.sakydpozrux.githubusers.network.NetworkErrorDescriptor;
 import com.example.sakydpozrux.githubusers.ui.user.UserDetailActivity;
 import com.example.sakydpozrux.githubusers.ui.user.UserDetailFragment;
 
@@ -66,6 +66,12 @@ public class UserListActivity extends AppCompatActivity
         } else {
             mTwoPane = false;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter.getUsersLastQuery();
     }
 
     @Override
@@ -124,7 +130,8 @@ public class UserListActivity extends AppCompatActivity
     }
 
     @Override
-    public void showError(String message) {
+    public void showError(Exception exception) {
+        String message = NetworkErrorDescriptor.getDescription(this, exception);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 

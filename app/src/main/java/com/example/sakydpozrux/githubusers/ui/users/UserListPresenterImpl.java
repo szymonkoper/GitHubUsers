@@ -7,9 +7,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.sakydpozrux.githubusers.app.GitHubUsersApp;
 import com.example.sakydpozrux.githubusers.network.Api;
+import com.example.sakydpozrux.githubusers.persistence.AppPreferences;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.inject.Inject;
 
@@ -18,13 +18,15 @@ import javax.inject.Inject;
  */
 
 public class UserListPresenterImpl implements UserListPresenter {
-    @Inject
-    Api api;
+    @Inject Api mApi;
+    @Inject AppPreferences mPreferences;
+    private Context mContext;
 
     private UserListPresenter.View view;
 
     public UserListPresenterImpl(Context context) {
-        ((GitHubUsersApp)context).getAppComponent().inject(this);
+        mContext = context;
+        ((GitHubUsersApp)mContext).getAppComponent().inject(this);
     }
 
     @Override
@@ -35,20 +37,29 @@ public class UserListPresenterImpl implements UserListPresenter {
     @Override
     public void getUsers(String query) {
         view.showLoading();
-        api.doUsersQuery(query, getResponseListener(), getErrorListener());
+        String cleanedQuery = query.trim().toLowerCase();
+        mPreferences.put(AppPreferences.KEY_DEFAULT_QUERY, cleanedQuery);
+        mApi.doUsersQuery(cleanedQuery, getResponseListener(), getErrorListener());
+    }
+
+    @Override
+    public void getUsersLastQuery() {
+        if (mPreferences.hasValue(AppPreferences.KEY_DEFAULT_QUERY)) {
+            getUsers(mPreferences.getValue(AppPreferences.KEY_DEFAULT_QUERY));
+        }
     }
 
     @NonNull
-    private Response.Listener<JSONObject> getResponseListener() {
-        return new Response.Listener<JSONObject>() {
+    private Response.Listener<String> getResponseListener() {
+        return new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String response) {
                 view.hideLoading();
 
                 try {
-                    view.showUsers(api.parseUsersResponse(response));
+                    view.showUsers(mApi.parseUsersResponse(response));
                 } catch (JSONException error) {
-                    view.showError(error.getLocalizedMessage());
+                    view.showError(error);
                 }
             }
         };
@@ -60,7 +71,7 @@ public class UserListPresenterImpl implements UserListPresenter {
             @Override
             public void onErrorResponse(VolleyError error) {
                 view.hideLoading();
-                view.showError(error.getLocalizedMessage());
+                view.showError(error);
             }
         };
     }

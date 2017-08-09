@@ -14,6 +14,7 @@ import com.example.sakydpozrux.githubusers.R;
 import com.example.sakydpozrux.githubusers.app.GitHubUsersApp;
 import com.example.sakydpozrux.githubusers.model.Repository;
 import com.example.sakydpozrux.githubusers.model.User;
+import com.example.sakydpozrux.githubusers.network.NetworkErrorDescriptor;
 
 import java.util.List;
 
@@ -73,7 +74,8 @@ public class UserDetailFragment extends Fragment implements UserDetailPresenter.
     }
 
     @Override
-    public void showError(String message) {
+    public void showError(Exception exception) {
+        String message = NetworkErrorDescriptor.getDescription(getActivity(), exception);
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 

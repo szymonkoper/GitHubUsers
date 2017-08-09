@@ -1,13 +1,15 @@
 package com.example.sakydpozrux.githubusers.network;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
+import com.android.volley.Cache;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.sakydpozrux.githubusers.app.GitHubUsersApp;
 import com.example.sakydpozrux.githubusers.model.Repository;
 import com.example.sakydpozrux.githubusers.model.User;
@@ -26,8 +28,8 @@ import javax.inject.Inject;
  */
 
 public class GitHubApi implements Api {
-    @Inject
-    RequestQueue requestQueue;
+    @Inject ConnectivityManager mConnectivityManager;
+    @Inject RequestQueue requestQueue;
 
     private static final String GITHUB_API_URL = "https://api.github.com";
     private static final String API_PATH_SEARCH = "search";
@@ -55,37 +57,55 @@ public class GitHubApi implements Api {
 
     @Override
     public void doUsersQuery(String query,
-                             Response.Listener<JSONObject> responseListener,
+                             Response.Listener<String> responseListener,
                              Response.ErrorListener errorListener) {
-        Uri uri = BASE_URI.buildUpon().appendQueryParameter(API_QUERY_PARAM, query).build();
-
-        requestQueue.add(
-                new JsonObjectRequest(
-                        Request.Method.GET,
-                        uri.toString(),
-                        null,
-                        responseListener,
-                        errorListener));
+        Uri uri = buildUsersQueryUri(query);
+        doQuery(responseListener, errorListener, uri);
     }
 
     @Override
     public void doReposQuery(String reposUrl,
-                             Response.Listener<JSONArray> responseListener,
+                             Response.Listener<String> responseListener,
                              Response.ErrorListener errorListener) {
-        Uri uri = Uri.parse(reposUrl).buildUpon()
-                .appendQueryParameter(API_PER_PAGE_PARAM, API_PER_PAGE_MAX).build();
+        Uri uri = buildUserReposUri(reposUrl);
+        doQuery(responseListener, errorListener, uri);
+    }
 
-        requestQueue.add(
-                new JsonArrayRequest(
-                        Request.Method.GET,
-                        uri.toString(),
-                        null,
-                        responseListener,
-                        errorListener));
+    private void doQuery(Response.Listener<String> responseListener,
+                         Response.ErrorListener errorListener,
+                         Uri uri) {
+        if (isNetworkAvailable()) {
+            doNetworkQuery(responseListener, errorListener, uri);
+        } else {
+            doCachedQuery(responseListener, errorListener, uri);
+        }
+    }
+
+    private void doNetworkQuery(Response.Listener<String> responseListener,
+                                Response.ErrorListener errorListener,
+                                Uri uri) {
+        requestQueue.add(new CachingStringRequest(
+                Request.Method.GET,
+                uri.toString(),
+                responseListener,
+                errorListener));
+    }
+
+    private void doCachedQuery(Response.Listener<String> responseListener,
+                               Response.ErrorListener errorListener,
+                               Uri uri) {
+        if (!isResponseInCache(uri)) {
+            errorListener.onErrorResponse(new NoConnectionError());
+            return;
+        }
+
+        String cachedResponse = getResponseFromCache(uri);
+        responseListener.onResponse(cachedResponse);
     }
 
     @Override
-    public List<User> parseUsersResponse(JSONObject json) throws JSONException {
+    public List<User> parseUsersResponse(String jsonString) throws JSONException {
+        JSONObject json = new JSONObject(jsonString);
         JSONArray array = json.getJSONArray(JSON_KEY_ITEMS);
 
         List<User> items = new LinkedList<>();
@@ -103,7 +123,8 @@ public class GitHubApi implements Api {
     }
 
     @Override
-    public List<Repository> parseReposResponse(JSONArray json) throws JSONException {
+    public List<Repository> parseReposResponse(String jsonArrayString) throws JSONException {
+        JSONArray json =  new JSONArray(jsonArrayString);
 
         List<Repository> items = new LinkedList<>();
         for (int i = 0; i < json.length(); ++i) {
@@ -113,5 +134,30 @@ public class GitHubApi implements Api {
         }
 
         return items;
+    }
+
+    private Uri buildUsersQueryUri(String query) {
+        return BASE_URI.buildUpon().appendQueryParameter(API_QUERY_PARAM, query).build();
+    }
+
+    private Uri buildUserReposUri(String reposUrl) {
+        return Uri.parse(reposUrl).buildUpon()
+                .appendQueryParameter(API_PER_PAGE_PARAM, API_PER_PAGE_MAX).build();
+    }
+
+    private boolean isNetworkAvailable() {
+        NetworkInfo activeNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private boolean isResponseInCache(Uri uri) {
+        Cache cache = requestQueue.getCache();
+        return cache.get(uri.toString()) != null;
+    }
+
+    private String getResponseFromCache(Uri uri) {
+        Cache cache = requestQueue.getCache();
+        Cache.Entry entry = cache.get(uri.toString());
+        return new String(entry.data);
     }
 }
